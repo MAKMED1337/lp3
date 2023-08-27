@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+    db:
+        image: postgres:latest
+        restart: always
+        env_file:
+            - env/database.env
+        volumes:
+            - postgres-volume:/var/lib/postgresql/data
+    
+    scraper:
+        build:
+            context: ./
+            dockerfile: log_scraper/Dockerfile
+        env_file:
+            - env/database.env
+            - env/account.env
+        depends_on:
+            - db
+
+volumes:
+    postgres-volume:
