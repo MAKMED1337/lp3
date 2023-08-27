@@ -3,8 +3,9 @@ from datetime import datetime
 
 from helper.db_config import db
 from helper.db_config import start as start_db
+from helper.lp3_config import lp3
 
-from .config import LIMIT, lp3
+from .config import LIMIT
 from .logs import Logs, LogsParams
 
 min_dt: datetime = datetime(1, 1, 1)  # noqa: DTZ001

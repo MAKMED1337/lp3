@@ -2,8 +2,18 @@ import json
 
 from pydantic import BaseModel, TypeAdapter
 
-from .logs import Logs, LogsParams
+from log_scraper.logs import Logs, LogsParams
+
 from .nearcrowd_account import V2, NearCrowdAccount
+
+
+class PermissionId:
+    admin = 0
+    permissions = 1
+    reports = 2
+    logs = 3
+    review = 4
+    task = 5
 
 
 class Permission(BaseModel):
@@ -35,7 +45,8 @@ class LP3Account(NearCrowdAccount):
         q.args['farm_id'] = self.farm_id
         return await super().query(q)
 
-    async def update_permissions(self, user_id: str, permission: int, action: str) -> None:
+    async def update_permissions(self, user_id: str, permission: int, allow: bool) -> None:
+        action = {1: 'grant', 0: 'revoke'}[allow]
         await self.query(V2(path='update_permissions', args={'user_id': user_id, 'permission': permission, 'action': action}))
 
     async def delete_user(self, user_id: str) -> None:
