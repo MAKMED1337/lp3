@@ -18,14 +18,14 @@ class DBSettings(BaseSettings):
     port: int = 5432
 
 
-settings = DBSettings()
+_settings = DBSettings()
 connection_url = URL.create(
     'postgresql',
-    settings.user,
-    settings.password,
-    settings.host,
-    settings.port,
-    settings.db,
+    _settings.user,
+    _settings.password,
+    _settings.host,
+    _settings.port,
+    _settings.db,
 )
 
 class Base(
