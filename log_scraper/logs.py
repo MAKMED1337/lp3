@@ -3,9 +3,10 @@ from enum import Enum
 from typing import Any, Optional
 
 from pydantic import BaseModel
-from sqlalchemy import JSON, VARCHAR, or_, select
+from sqlalchemy import JSON, VARCHAR, distinct, or_, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.sql import func
 
 from helper.db_config import Base, db, to_mapping
 
@@ -39,19 +40,8 @@ class Logs(Base):
     short_descr: Mapped[str] = mapped_column(VARCHAR(256))
     type: Mapped[Type]
 
-    review_balance: Mapped[int] = mapped_column(default=0, server_default='0', nullable=False)
-
-    def calculate_balance(self) -> int:
-        if self.type == Type.task:
-            return +8
-        if self.type == Type.review:
-            return -1
-        return 0
-
     @staticmethod
     async def bulk_upsert(values: list['Logs']) -> None:
-        for value in values:
-            value.review_balance = value.calculate_balance()
         await db.execute_many(
             insert(Logs).on_conflict_do_update(index_elements=['entry_id'], set_=to_mapping(Logs)),
             [to_mapping(value) for value in values],
@@ -76,3 +66,20 @@ class Logs(Base):
     @staticmethod
     async def get_latest_log() -> Optional['Logs']:
         return await db.fetch_one(select(Logs).order_by(Logs.entry_id.desc()).limit(1))  # type: ignore[return-value]
+
+    @staticmethod
+    async def get_review_balances() -> dict[str, int]:
+        count: dict[str, int] = {}
+        async with db.transaction():
+            for user_id, task_count in await db.fetch_all(
+                select(Logs.user_id, func.count(distinct(Logs.user_task_id))).where(Logs.type == Type.task).group_by(Logs.user_id),
+            ):
+                count.setdefault(user_id, 0)
+                count[user_id] += 8 * task_count
+
+            for user_id, review_count in await db.fetch_all(
+                select(Logs.user_id, func.count(1)).where(Logs.type == Type.review).group_by(Logs.user_id),
+            ):
+                count.setdefault(user_id, 0)
+                count[user_id] -= review_count
+        return count
