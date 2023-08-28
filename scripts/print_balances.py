@@ -9,8 +9,10 @@ async def main() -> None:
     await start_db()
     whitelist = await Whitelist.get_all()
     for user_id, balance in (await Logs.get_review_balances()).items():
-        if user_id in whitelist:
-            print(user_id, '—', balance)
+        if user_id not in whitelist:
+            continue
+
+        print(user_id, '—', balance, whitelist[user_id].review)
 
 
 if __name__ == '__main__':
