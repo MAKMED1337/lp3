@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Any, Optional
 
 from pydantic import BaseModel
-from sqlalchemy import JSON, VARCHAR, distinct, or_, select
+from sqlalchemy import JSON, VARCHAR, and_, or_, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
@@ -40,12 +40,24 @@ class Logs(Base):
     short_descr: Mapped[str] = mapped_column(VARCHAR(256))
     type: Mapped[Type]
 
-    @staticmethod
-    async def bulk_upsert(values: list['Logs']) -> None:
-        await db.execute_many(
-            insert(Logs).on_conflict_do_update(index_elements=['entry_id'], set_=to_mapping(Logs)),
-            [to_mapping(value) for value in values],
-        )
+    review_balance: Mapped[int | None] = mapped_column(default=None, server_default='0', nullable=False)
+
+    async def get_balance(self) -> int:
+        if self.review_balance is not None:
+            return self.review_balance
+
+        if self.type == Type.review:
+            return -1
+        if self.type != Type.task:
+            return 0
+
+        another_task = await db.fetch_one(select(Logs).where(and_(Logs.user_task_id == self.user_task_id, Logs.type == Type.task)))
+        return 8 if another_task is None else 0
+
+    async def upsert(self) -> None:
+        async with db.transaction():
+            self.review_balance = await self.get_balance()
+            await db.execute(insert(Logs).on_conflict_do_update(index_elements=['entry_id'], set_=to_mapping(Logs)), to_mapping(self))
 
     @staticmethod
     async def get(options: LogsParams = LogsParams()) -> list['Logs']:  # noqa: B008
@@ -69,17 +81,4 @@ class Logs(Base):
 
     @staticmethod
     async def get_review_balances() -> dict[str, int]:
-        count: dict[str, int] = {}
-        async with db.transaction():
-            for user_id, task_count in await db.fetch_all(
-                select(Logs.user_id, func.count(distinct(Logs.user_task_id))).where(Logs.type == Type.task).group_by(Logs.user_id),
-            ):
-                count.setdefault(user_id, 0)
-                count[user_id] += 8 * task_count
-
-            for user_id, review_count in await db.fetch_all(
-                select(Logs.user_id, func.count(1)).where(Logs.type == Type.review).group_by(Logs.user_id),
-            ):
-                count.setdefault(user_id, 0)
-                count[user_id] -= review_count
-        return count
+        return dict(await db.fetch_all(select(Logs.user_id, func.sum(Logs.review_balance)).group_by(Logs.user_id)))  # type: ignore[arg-type]
