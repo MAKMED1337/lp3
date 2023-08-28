@@ -10,6 +10,7 @@ services:
             - postgres-volume:/var/lib/postgresql/data
 
     scraper:
+        restart: always
         build:
             context: ./
             dockerfile: log_scraper/Dockerfile
@@ -20,6 +21,7 @@ services:
             - db
 
     permissions:
+        restart: always
         build:
             context: ./
             dockerfile: review_permissions/Dockerfile
@@ -30,6 +32,7 @@ services:
             - db
 
     tester:  # for test through `exec -it`
+        restart: always
         build: .
         env_file:
             - env/database.env
