@@ -47,7 +47,7 @@ class LP3Account(NearCrowdAccount):
 
     async def update_permissions(self, user_id: str, permission: int, allow: bool) -> None:
         action = {1: 'grant', 0: 'revoke'}[allow]
-        await self.query(V2(path='update_permissions', args={'user_id': user_id, 'permission': permission, 'action': action}))
+        await self.query(V2(path='update_permission', args={'user_id': user_id, 'permission': permission, 'action': action}))
 
     async def delete_user(self, user_id: str) -> None:
         await self.query(V2(path='delete_user', args={'user_id': user_id}))
