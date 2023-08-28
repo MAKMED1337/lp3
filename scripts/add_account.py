@@ -20,7 +20,7 @@ async def main() -> None:
         user_id = permission.user_id
         if normalize_name(user_id) == allowed:
             print(user_id)
-            await Whitelist.insert(Whitelist(user_id, True))
+            await Whitelist(user_id, True).upsert()
 
 
 if __name__ == '__main__':

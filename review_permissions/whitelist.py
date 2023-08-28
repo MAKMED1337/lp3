@@ -15,11 +15,10 @@ class Whitelist(Base):
     async def can_do_reviews(user_id: str) -> bool:
         return await db.fetch_val(select(Whitelist.review).where(Whitelist.user_id == user_id)) is True
 
-    @staticmethod
-    async def insert(value: 'Whitelist') -> None:
+    async def upsert(self) -> None:
         await db.execute(
-            insert(Whitelist).on_conflict_do_update(index_elements=['user_id'], set_=to_mapping(Whitelist)),
-            to_mapping(value),
+            insert(Whitelist).on_conflict_do_update(index_elements=['user_id'], set_=to_mapping(self)),
+            to_mapping(self),
         )
 
     async def get_all() -> dict[str, 'Whitelist']:

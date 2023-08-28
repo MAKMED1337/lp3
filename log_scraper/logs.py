@@ -57,7 +57,10 @@ class Logs(Base):
     async def upsert(self) -> None:
         async with db.transaction():
             self.review_balance = await self.get_balance()
-            await db.execute(insert(Logs).on_conflict_do_update(index_elements=['entry_id'], set_=to_mapping(Logs)), to_mapping(self))
+            await db.execute(
+                insert(Logs).on_conflict_do_update(index_elements=['entry_id'], set_=to_mapping(self)),
+                to_mapping(self),
+            )
 
     @staticmethod
     async def get(options: LogsParams = LogsParams()) -> list['Logs']:  # noqa: B008
