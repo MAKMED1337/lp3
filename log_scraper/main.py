@@ -28,7 +28,7 @@ async def _scrap_new_logs(params: LogsParams) -> list[Logs]:
     logs = await lp3.get_logs(params)
 
     if len(logs) != LIMIT or logs[-1].dt < min_dt:
-        return []
+        return logs
 
     if params.max_dt == logs[-1].dt:
         # fallback to scraping per user
