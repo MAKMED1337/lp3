@@ -17,8 +17,9 @@ async def main() -> None:
     allowed = normalize_name(input())
 
     for permission in await lp3.get_permissions():
-        user_id = normalize_name(permission.user_id)
-        if user_id == allowed:
+        user_id = permission.user_id
+        if normalize_name(user_id) == allowed:
+            print(user_id)
             await Whitelist.insert(Whitelist(user_id, True))
 
 
