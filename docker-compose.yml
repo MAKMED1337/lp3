@@ -30,11 +30,10 @@ services:
             - db
 
     tester:  # for test through `exec -it`
-        image: python:3.11
+        build: .
         env_file:
             - env/database.env
             - env/account.env
-        working_dir: /lp3
         tty: true
         volumes:
             - ./:/lp3
