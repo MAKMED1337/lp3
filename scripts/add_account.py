@@ -2,8 +2,7 @@ from helper.db_config import db
 from helper.db_config import start as start_db
 from helper.lp3_config import lp3
 from helper.main_handler import main_handler
-
-from .whitelist import Whitelist
+from review_permissions.whitelist import Whitelist
 
 
 def normalize_name(user_id: str) -> str:
