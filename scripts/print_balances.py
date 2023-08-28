@@ -7,9 +7,9 @@ from review_permissions.whitelist import Whitelist
 
 async def main() -> None:
     await start_db()
-    whitelist_users = [i.user_id for i in await Whitelist.get_all()]
+    whitelist = await Whitelist.get_all()
     for user_id, balance in (await Logs.get_review_balances()).items():
-        if user_id in whitelist_users:
+        if user_id in whitelist:
             print(user_id, '—', balance)
 
 
