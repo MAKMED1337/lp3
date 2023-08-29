@@ -1,5 +1,4 @@
 import asyncio
-from datetime import datetime
 
 from helper.db_config import db
 from helper.db_config import start as start_db
@@ -10,7 +9,7 @@ from helper.utils import flatten
 from .config import LIMIT
 from .logs import Logs, LogsParams
 
-min_dt: datetime = datetime(1, 1, 1)  # noqa: DTZ001
+min_entry_id: int = 0
 
 
 # unordered
@@ -27,7 +26,9 @@ async def _scrap_new_logs_per_user(params: LogsParams) -> list[Logs]:
 async def _scrap_new_logs(params: LogsParams) -> list[Logs]:
     logs = await lp3.get_logs(params)
 
-    if len(logs) != LIMIT or logs[-1].dt < min_dt:
+    entry_ids = [i.entry_id for i in logs]
+    if len(logs) != LIMIT or min_entry_id in entry_ids or entry_ids[0] <= min_entry_id:
+        # end of logs OR we've reached min entry id OR we've passed(by HEAD) it(on previous iteration)
         return logs
 
     if params.max_dt == logs[-1].dt:
@@ -40,22 +41,23 @@ async def _scrap_new_logs(params: LogsParams) -> list[Logs]:
     return logs
 
 
-# ordered
+# ordered, only new ones
 async def scrap_new_logs() -> list[Logs]:
-    global min_dt
-    latest = await Logs.get_latest_log()
-    min_dt = latest.dt if latest else datetime(1, 1, 1)  # noqa: DTZ001
+    global min_entry_id
+    if latest := await Logs.get_latest_log():
+        min_entry_id = latest.entry_id
     logs = await _scrap_new_logs(LogsParams())
     logs.sort(key=lambda log: log.entry_id)
-    return logs
+    return [i for i in logs if i.entry_id > min_entry_id]
 
 
 async def main() -> None:
     await start_db()
     while True:
-        for log in await scrap_new_logs():
+        logs = await scrap_new_logs()
+        for log in logs:
             await log.upsert()
-        await asyncio.sleep(1)
+        await asyncio.sleep(5)
 
 
 if __name__ == '__main__':
