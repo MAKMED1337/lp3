@@ -3,3 +3,4 @@ env
 .ruff_cache
 .vscode
 **/__pycache__
+backup/*
