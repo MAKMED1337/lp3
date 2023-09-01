@@ -7,17 +7,13 @@ from management.whitelist import Whitelist
 
 async def main() -> None:
     await start_db()
-    user_id = input('New user id:')
-    previous_id = input('Owner user id:')
+    user_id = input()
 
-    if previous_id == '':
-        owner_id = None
-    else:
-        owner_id = await Users.get_owner(previous_id)
-        assert owner_id is not None
+    owner_id = await Users.get_owner(user_id)
+    assert owner_id is not None
 
-    await Users.add(user_id, owner_id)
-    await Whitelist(user_id, False).upsert()
+    for user_id in await Users.get_accounts(owner_id):
+        await Whitelist(user_id, True).upsert()
 
 
 if __name__ == '__main__':
