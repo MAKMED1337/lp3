@@ -13,6 +13,7 @@ async def main() -> None:
     assert owner_id is not None
 
     for user_id in await Users.get_accounts(owner_id):
+        print(user_id)
         await Whitelist(user_id, True).upsert()
 
 
