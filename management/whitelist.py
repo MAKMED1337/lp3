@@ -21,5 +21,7 @@ class Whitelist(Base):
             to_mapping(self),
         )
 
+    @staticmethod
     async def get_all() -> dict[str, 'Whitelist']:
-        return {i.user_id: i for i in await db.fetch_all(select(Whitelist))}
+        whitelist: list[Whitelist] = await db.fetch_all(select(Whitelist))  # type: ignore[assignment]
+        return {i.user_id: i for i in whitelist}

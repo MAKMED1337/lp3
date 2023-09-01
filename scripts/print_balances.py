@@ -2,7 +2,7 @@ from helper.db_config import db
 from helper.db_config import start as start_db
 from helper.main_handler import main_handler
 from log_scraper.logs import Logs
-from review_permissions.whitelist import Whitelist
+from management.whitelist import Whitelist
 
 
 async def main() -> None:
