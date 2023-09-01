@@ -7,8 +7,8 @@ from management.whitelist import Whitelist
 
 async def main() -> None:
     await start_db()
-    user_id = input('New user id:')
-    previous_id = input('Owner user id:')
+    user_id = input('New user id: ')
+    previous_id = input('Owner user id: ')
 
     if previous_id == '':
         owner_id = None

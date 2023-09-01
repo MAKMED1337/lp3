@@ -7,7 +7,7 @@ from management.whitelist import Whitelist
 
 async def main() -> None:
     await start_db()
-    user_id = input()
+    user_id = input('User id: ')
 
     owner_id = await Users.get_owner(user_id)
     assert owner_id is not None
