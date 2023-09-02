@@ -9,9 +9,9 @@ from management.connected_accounts import ConnectedAccounts
 
 async def main() -> None:
     await start_db()
-    user_id = input()
+    user_id = input('User id: ')
     reason = ''
-    while (line := input()) != '--end':
+    while (line := input('Reason: ')) != '--end':
         reason += line + '\n'
 
     owner_id = await ConnectedAccounts.get_owner_id(user_id)
