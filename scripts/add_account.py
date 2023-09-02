@@ -3,7 +3,7 @@ from helper.db_config import start as start_db
 from helper.lp3_config import lp3
 from helper.main_handler import main_handler
 from management.connected_accounts import ConnectedAccounts
-from management.user import Users
+from management.users import Users
 
 
 async def main() -> None:

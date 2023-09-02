@@ -8,7 +8,7 @@ from helper.main_handler import main_handler
 from log_scraper.logs import Logs
 from management.bans import Bans
 from management.connected_accounts import ConnectedAccounts
-from management.user import Users
+from management.users import Users
 
 account_owners: dict[str, int] = {}
 owners: dict[int, Users] = {}

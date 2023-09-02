@@ -3,7 +3,7 @@ from helper.db_config import start as start_db
 from helper.main_handler import main_handler
 from log_scraper.logs import Logs
 from management.connected_accounts import ConnectedAccounts
-from management.user import Users
+from management.users import Users
 
 
 async def main() -> None:
