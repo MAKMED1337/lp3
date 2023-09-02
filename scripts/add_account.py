@@ -1,9 +1,9 @@
 from helper.db_config import db
 from helper.db_config import start as start_db
+from helper.lp3_config import lp3
 from helper.main_handler import main_handler
 from management.connected_accounts import ConnectedAccounts
 from management.user import Users
-from management.whitelist import Whitelist
 
 
 async def main() -> None:
@@ -12,14 +12,13 @@ async def main() -> None:
     previous_id = input('Owner user id: ')
 
     if previous_id == '':
-        owner = await Users.create()
+        owner_id = await Users.create()
     else:
-        owner_id = await ConnectedAccounts.get_owner_id(previous_id)
+        owner_id = await ConnectedAccounts.get_owner_id(previous_id)  # type: ignore[assignment]
         assert owner_id is not None
-        owner = Users(owner_id)
 
-    await owner.add_account(user_id)
-    await Whitelist(user_id, False).upsert()
+    await Users.add_account(owner_id, user_id)
+    await lp3.add_user(user_id)
 
 
 if __name__ == '__main__':

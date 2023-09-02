@@ -2,7 +2,7 @@ from helper.db_config import db
 from helper.db_config import start as start_db
 from helper.main_handler import main_handler
 from management.connected_accounts import ConnectedAccounts
-from management.whitelist import Whitelist
+from management.user import Users
 
 
 async def main() -> None:
@@ -11,10 +11,7 @@ async def main() -> None:
 
     owner_id = await ConnectedAccounts.get_owner_id(user_id)
     assert owner_id is not None
-
-    for user_id in await ConnectedAccounts.get_accounts(owner_id):
-        print(user_id)
-        await Whitelist(user_id, True).upsert()
+    await Users.allow_reviews(owner_id)
 
 
 if __name__ == '__main__':

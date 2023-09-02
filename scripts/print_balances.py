@@ -2,17 +2,18 @@ from helper.db_config import db
 from helper.db_config import start as start_db
 from helper.main_handler import main_handler
 from log_scraper.logs import Logs
-from management.whitelist import Whitelist
+from management.connected_accounts import ConnectedAccounts
+from management.user import Users
 
 
 async def main() -> None:
     await start_db()
-    whitelist = await Whitelist.get_all()
+    owners = await ConnectedAccounts.get_owners()
     for user_id, balance in (await Logs.get_review_balances()).items():
-        if user_id not in whitelist:
-            continue
+        owner = await Users.get(owners[user_id])
+        assert owner is not None
 
-        print(user_id, '—', balance, whitelist[user_id].review)
+        print(user_id, '—', balance, owner.can_perform_reviews)
 
 
 if __name__ == '__main__':
