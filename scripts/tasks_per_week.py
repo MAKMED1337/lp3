@@ -10,7 +10,7 @@ async def main() -> None:
     await start_db()
 
     logs = await Logs.get(LogsParams(types=[Type.task]))
-    users = {i.user_id: [] for i in logs}
+    users: dict[str, list[Logs]] = {i.user_id: [] for i in logs}
     for i in logs:
         users[i.user_id].append(i)
 
