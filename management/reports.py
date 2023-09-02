@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import ForeignKey, insert, select
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -10,12 +12,15 @@ class Reports(Base):
     __tablename__ = 'reports'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    dt: Mapped[datetime]
     owner_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     text: Mapped[str]
+    penalty: Mapped[bool]
 
     @staticmethod
-    async def report(owner_id: int, text: str) -> None:
-        await db.execute(insert(Reports).values(owner_id=owner_id, text=text))
+    async def report(owner_id: int, text: str, penalty: bool = False, *, dt: datetime | None = None) -> None:
+        dt = dt or datetime.now()  # noqa: DTZ005
+        await db.execute(insert(Reports).values(owner_id=owner_id, text=text, dt=dt, penalty=penalty))
 
     @staticmethod
     async def get_reports(owner_id: int) -> list['Reports']:

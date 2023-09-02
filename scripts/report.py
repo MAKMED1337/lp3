@@ -15,7 +15,8 @@ async def main() -> None:
     while (line := input('Text: ')) != '--end':
         text += line + '\n'
 
-    await Reports.report(owner_id, text)
+    penalty = bool(input('Penalty ? '))
+    await Reports.report(owner_id, text, penalty)
 
 
 if __name__ == '__main__':
