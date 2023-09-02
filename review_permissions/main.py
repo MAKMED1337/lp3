@@ -7,7 +7,7 @@ from helper.lp3_config import lp3
 from helper.main_handler import main_handler
 from log_scraper.logs import Logs
 from management.bans import Bans
-from management.users import Users
+from management.connected_accounts import ConnectedAccounts
 from management.whitelist import Whitelist
 
 owners: dict[str, int] = {}
@@ -32,7 +32,7 @@ async def main() -> None:
     while True:
         review_balances = await Logs.get_review_balances()
         whitelist = await Whitelist.get_all()
-        owners = await Users.get_owners()
+        owners = await ConnectedAccounts.get_owners()
         bans = await Bans.active_bans()
 
         for permission in await lp3.get_permissions():

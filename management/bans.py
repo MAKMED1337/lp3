@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from typing import Optional
 
-from sqlalchemy import insert, select
+from sqlalchemy import ForeignKey, insert, select
 from sqlalchemy.orm import Mapped, mapped_column
 
 from helper.db_config import Base, db
@@ -11,7 +11,7 @@ class Bans(Base):
     __tablename__ = 'bans'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    owner_id: Mapped[int]
+    owner_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     start: Mapped[datetime]
     end: Mapped[datetime]
     reason: Mapped[str]

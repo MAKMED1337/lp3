@@ -4,7 +4,7 @@ from helper.db_config import db
 from helper.db_config import start as start_db
 from helper.main_handler import main_handler
 from management.bans import Bans
-from management.users import Users
+from management.connected_accounts import ConnectedAccounts
 
 
 async def main() -> None:
@@ -14,7 +14,9 @@ async def main() -> None:
     while (line := input()) != '--end':
         reason += line + '\n'
 
-    owner_id = await Users.get_owner(user_id)
+    owner_id = await ConnectedAccounts.get_owner_id(user_id)
+    assert owner_id is not None
+
     await Bans.ban(owner_id, reason, timedelta(days=7))
 
 
