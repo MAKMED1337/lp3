@@ -32,7 +32,7 @@ class Users(Base):
 
     @staticmethod
     async def allow_reviews(id: int) -> None:
-        await db.execute(update(Users).where(Users.id == id).values(can_perfom_reviews=True))
+        await db.execute(update(Users).where(Users.id == id).values(can_perform_reviews=True))
 
     @staticmethod
     async def get_all() -> list['Users']:
