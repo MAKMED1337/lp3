@@ -41,7 +41,7 @@ async def connect_account(msg: Message) -> None:
         return
 
     async with db.transaction():
-        user = await Users.get(owner_id)
+        user: Users = await Users.get(owner_id)  # type: ignore[assignment]
         if user.tg_id is not None:
             await msg.reply('This account is already connected')
             return
