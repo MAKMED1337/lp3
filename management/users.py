@@ -1,6 +1,6 @@
 from typing import Optional
 
-from sqlalchemy import insert, select, update
+from sqlalchemy import BigInteger, insert, select, update
 from sqlalchemy.orm import Mapped, mapped_column
 
 from helper.db_config import Base, db
@@ -12,6 +12,7 @@ class Users(Base):
     __tablename__ = 'users'
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    tg_id: Mapped[int | None] = mapped_column(BigInteger, unique=True)
     can_perform_reviews: Mapped[bool] = mapped_column(default=False, server_default='false')
 
     @staticmethod
@@ -21,6 +22,14 @@ class Users(Base):
     @staticmethod
     async def get(id: int) -> Optional['Users']:
         return await db.fetch_one(select(Users).where(Users.id == id))  # type: ignore[return-value]
+
+    @staticmethod
+    async def get_by_tg(tg_id: int) -> Optional['Users']:
+        return await db.fetch_one(select(Users).where(Users.tg_id == tg_id))  # type: ignore[return-value]
+
+    @staticmethod
+    async def connect_tg(id: int, tg_id: int) -> None:
+        await db.execute(update(Users).where(Users.id == id).values(tg_id=tg_id))
 
     @staticmethod
     async def create() -> int:
