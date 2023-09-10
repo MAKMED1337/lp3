@@ -33,7 +33,7 @@ async def connected_accounts(msg: Message) -> None:
 async def connect_account(msg: Message) -> None:
     result = re.search(fr'^/connect(?:@{BOT_NAME})? ([a-zA-Z0-9_.]+)$', msg.text)
     if not result or len(result.groups()) != 1:
-        await msg.reply('Invalid wallet')
+        await msg.reply('Invalid wallet.\nUsage: /connect test.near')
         return
 
     account_id = result.group(1)
