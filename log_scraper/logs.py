@@ -83,5 +83,9 @@ class Logs(Base):
         return await db.fetch_one(select(Logs).order_by(Logs.entry_id.desc()).limit(1))  # type: ignore[return-value]
 
     @staticmethod
-    async def get_review_balances() -> dict[str, int]:
+    async def get_all_review_balances() -> dict[str, int]:
         return dict(await db.fetch_all(select(Logs.user_id, func.sum(Logs.review_balance)).group_by(Logs.user_id)))  # type: ignore[arg-type]
+
+    @staticmethod
+    async def get_review_balance(user_id: str) -> int:
+        return await db.fetch_val(select(func.sum(Logs.review_balance)).where(Logs.user_id == user_id))

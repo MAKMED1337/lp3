@@ -31,7 +31,7 @@ async def main() -> None:
     await start_db()
 
     while True:
-        review_balances = await Logs.get_review_balances()
+        review_balances = await Logs.get_all_review_balances()
         owners = {i.id: i for i in await Users.get_all()}
         account_owners = await ConnectedAccounts.get_owners()
         bans = await Bans.active_bans()

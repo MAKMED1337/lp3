@@ -9,7 +9,7 @@ from management.users import Users
 async def main() -> None:
     await start_db()
     owners = await ConnectedAccounts.get_owners()
-    for user_id, balance in (await Logs.get_review_balances()).items():
+    for user_id, balance in (await Logs.get_all_review_balances()).items():
         owner = await Users.get(owners[user_id])
         assert owner is not None
 
