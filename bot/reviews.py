@@ -21,5 +21,5 @@ async def connect_account(msg: Message) -> None:
     text = ''
     tasks = [Logs.get_review_balance(account_id) for account_id in accounts]
     for account_id, balance in zip(accounts, await asyncio.gather(*tasks), strict=True):
-        text += f'{account_id} — {balance}'
+        text += f'{account_id} — {balance}\n'
     await msg.reply(text)
