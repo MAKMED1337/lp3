@@ -10,6 +10,9 @@ async def main() -> None:
     await start_db()
     owners = await ConnectedAccounts.get_owners()
     for user_id, balance in (await Logs.get_all_review_balances()).items():
+        if user_id not in owners:
+            continue
+
         owner = await Users.get(owners[user_id])
         assert owner is not None
 
