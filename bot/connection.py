@@ -1,5 +1,3 @@
-import re
-
 from telethon import events
 from telethon.types import Message
 
@@ -7,7 +5,8 @@ from helper.db_config import db
 from management.connected_accounts import ConnectedAccounts
 from management.users import Users
 
-from .config import BOT_NAME, bot
+from .config import bot
+from .helper import command_with_wallet
 
 
 async def listify_accounts(user_id: int) -> str:
@@ -27,14 +26,8 @@ async def connected_accounts(msg: Message) -> None:
     await msg.reply(await listify_accounts(user.id))
 
 
-@bot.on(events.NewMessage(pattern=r'^/connect'))
-async def connect_account(msg: Message) -> None:
-    result = re.search(fr'^/connect(?:@{BOT_NAME})? ([a-zA-Z0-9_.]+)$', msg.text)
-    if not result or len(result.groups()) != 1:
-        await msg.reply('Invalid wallet.\nUsage: /connect test.near')
-        return
-
-    account_id = result.group(1)
+@command_with_wallet('connect')
+async def connect_account(msg: Message, account_id: str) -> None:
     owner_id = await ConnectedAccounts.get_owner_id(account_id)
     if owner_id is None:
         await msg.reply('Unknown account')
