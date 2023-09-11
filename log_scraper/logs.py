@@ -52,7 +52,7 @@ class Logs(Base):
             return 0
 
         another_task = await db.fetch_one(select(Logs).where(and_(Logs.user_task_id == self.user_task_id, Logs.type == Type.task)))
-        return 10 if another_task is None else 0
+        return 7 if another_task is None else 0
 
     async def upsert(self) -> None:
         async with db.transaction():
