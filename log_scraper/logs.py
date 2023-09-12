@@ -92,4 +92,8 @@ class Logs(Base):
 
     @staticmethod
     async def get_task_id(name: str) -> int | None:
-        return await db.fetch_val(select(Logs.user_task_id).where(func.replace(Logs.short_descr, '  ', ' ') == name))
+        return await db.fetch_val(
+            select(Logs.user_task_id)
+            .where(func.replace(Logs.short_descr, '  ', ' ') == name)
+            .order_by(Logs.entry_id.desc()),
+        )
