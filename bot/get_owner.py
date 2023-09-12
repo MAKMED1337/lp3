@@ -14,7 +14,6 @@ async def connect_account(msg: Message, account_id: str) -> None:
         await msg.reply('Unknown account')
         return
 
-    print(owner_id)
     owner = await Users.get(owner_id)
     assert owner is not None
 
