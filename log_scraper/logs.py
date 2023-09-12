@@ -89,3 +89,7 @@ class Logs(Base):
     @staticmethod
     async def get_review_balance(user_id: str) -> int:
         return await db.fetch_val(select(func.sum(Logs.review_balance)).where(Logs.user_id == user_id))
+
+    @staticmethod
+    async def get_task_id(name: str) -> int | None:
+        return await db.fetch_val(select(Logs.user_task_id).where(func.replace(Logs.short_descr, '  ', ' ') == name))

@@ -2,7 +2,7 @@ from helper.db_config import db
 from helper.db_config import start as start_db
 from helper.main_handler import main_handler
 
-from . import connection, get_owner, reviews  # noqa: F401
+from . import connection, get_owner, get_task, reviews  # noqa: F401
 from .config import run, start
 
 
