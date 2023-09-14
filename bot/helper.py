@@ -15,7 +15,7 @@ def command_with_wallet(command: str) -> Callable[[OriginalFunc], DecoratedFunc]
     def inner(func: OriginalFunc) -> DecoratedFunc:
         @bot.on(events.NewMessage(pattern=fr'^/{command}'))
         async def process(msg: Message) -> Any:
-            result = re.search(fr'^/{command}(?:@{BOT_NAME})? ([a-zA-Z0-9_.]+)$', msg.text)
+            result = re.search(fr'^/{command}(?:@{BOT_NAME})? ([a-zA-Z0-9_.]+)$', msg.raw_text)
             if not result or len(result.groups()) != 1:
                 await msg.reply(f'Invalid wallet.\nUsage: /{command} test.near')
                 return None
