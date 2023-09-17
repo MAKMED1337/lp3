@@ -33,7 +33,7 @@ class Users(Base):
 
     @staticmethod
     async def create() -> int:
-        return await db.execute(insert(Users).values().returning(Users.id))
+        return await db.fetch_val(insert(Users).returning(Users.id), {'can_perform_reviews': False})  # some trouble with default values
 
     @staticmethod
     async def get_accounts(id: int) -> list[str]:
