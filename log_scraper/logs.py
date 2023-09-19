@@ -10,6 +10,8 @@ from sqlalchemy.sql import func
 
 from helper.db_config import Base, db, to_mapping
 
+from .config import REVIEWS_PER_TASK
+
 
 class Type(Enum):
     got_task = 'got_task'
@@ -52,7 +54,7 @@ class Logs(Base):
             return 0
 
         another_task = await db.fetch_one(select(Logs).where(and_(Logs.user_task_id == self.user_task_id, Logs.type == Type.task)))
-        return 7 if another_task is None else 0
+        return REVIEWS_PER_TASK if another_task is None else 0
 
     async def upsert(self) -> None:
         async with db.transaction():
