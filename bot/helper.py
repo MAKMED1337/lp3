@@ -31,4 +31,7 @@ def represent(user: User) -> str:
         return '@' + username
 
     name = utils.get_display_name(user)
-    return html.escape(name).replace('/', '/&NoBreak;')
+    if result := html.escape(name).replace('/', '/&NoBreak;'):
+        return result
+
+    return 'Deleted account'
