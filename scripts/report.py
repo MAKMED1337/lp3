@@ -4,6 +4,7 @@ from helper.main_handler import main_handler
 from management.connected_accounts import ConnectedAccounts
 from management.reports import Reports
 
+from .config import ADMIN_ID
 from .print_reports import print_reports
 
 
@@ -22,7 +23,7 @@ async def main() -> None:
         text += line + '\n'
 
     penalty = bool(input('Penalty ? '))
-    await Reports.report(owner_id, text, penalty)
+    await Reports.report(owner_id, text, penalty, admin_id=ADMIN_ID)
 
 
 if __name__ == '__main__':

@@ -6,6 +6,8 @@ from helper.main_handler import main_handler
 from management.bans import Bans
 from management.connected_accounts import ConnectedAccounts
 
+from .config import ADMIN_ID
+
 
 async def main() -> None:
     await start_db()
@@ -18,7 +20,7 @@ async def main() -> None:
     while (line := input('Reason: ')) != '--end':
         reason += line + '\n'
 
-    await Bans.ban(owner_id, reason, timedelta(days=7))
+    await Bans.ban(owner_id, reason, timedelta(days=7), admin_id=ADMIN_ID)
 
 
 if __name__ == '__main__':

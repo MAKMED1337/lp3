@@ -15,6 +15,7 @@ class Bans(Base):
     start: Mapped[datetime]
     end: Mapped[datetime]
     reason: Mapped[str]
+    admin_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
 
     @staticmethod
     async def last_ban(owner_id: str) -> Optional['Bans']:
@@ -26,6 +27,6 @@ class Bans(Base):
         return await db.fetch_all(select(Bans).where(Bans.end >= now))  # type: ignore[return-value]
 
     @staticmethod
-    async def ban(owner_id: int, reason: str, duration: timedelta, *, start: datetime | None = None) -> None:
+    async def ban(owner_id: int, reason: str, duration: timedelta, *, start: datetime | None = None, admin_id: int) -> None:
         start = start or datetime.now()  # noqa: DTZ005
-        await db.execute(insert(Bans).values({'owner_id': owner_id, 'start': start, 'end': start + duration, 'reason': reason}))
+        await db.execute(insert(Bans).values({'owner_id': owner_id, 'start': start, 'end': start + duration, 'reason': reason, 'admin_id': admin_id}))

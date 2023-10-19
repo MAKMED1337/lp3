@@ -16,11 +16,12 @@ class Reports(Base):
     owner_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     text: Mapped[str]
     penalty: Mapped[bool]
+    admin_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
 
     @staticmethod
-    async def report(owner_id: int, text: str, penalty: bool = False, *, dt: datetime | None = None) -> None:
+    async def report(owner_id: int, text: str, penalty: bool = False, *, dt: datetime | None = None, admin_id: int) -> None:
         dt = dt or datetime.now()  # noqa: DTZ005
-        await db.execute(insert(Reports).values(owner_id=owner_id, text=text, dt=dt, penalty=penalty))
+        await db.execute(insert(Reports).values(owner_id=owner_id, text=text, dt=dt, penalty=penalty, admin_id=admin_id))
 
     @staticmethod
     async def get_reports(owner_id: int) -> list['Reports']:
