@@ -14,6 +14,7 @@ class Users(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     tg_id: Mapped[int | None] = mapped_column(BigInteger, unique=True)
     can_perform_reviews: Mapped[bool] = mapped_column(default=False, server_default='false')
+    is_admin: Mapped[bool] = mapped_column(default=False, server_default='false')
 
     @staticmethod
     async def add_account(id: int, user_id: str) -> None:
