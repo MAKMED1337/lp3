@@ -120,7 +120,7 @@ async def ban_reviews(msg: Message, admin: Users, account_id: str) -> None:
 
     async with bot.conversation(msg.sender) as conv:
         try:
-            if not await person_clarification(conv, 'ban', account_id, owner_id):
+            if not await person_clarification(conv, 'ban reviews for', account_id, owner_id):
                 await conv.send_message('Stopping conversation, reason: wrong person')
                 return
             await conv.send_message('You can use /stop to stop conversation if you have chosen the wrong person')
