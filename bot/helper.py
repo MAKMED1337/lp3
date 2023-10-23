@@ -51,7 +51,7 @@ def admin_command(command: str) -> Callable[[AdminFunc], DecoratedFunc]:
                 return None
 
             owner = await Users.get_by_tg(msg.sender_id)
-            if not owner.is_admin:
+            if owner is None or not owner.is_admin:
                 await msg.reply('This command can be used only by admins')
                 return None
 
