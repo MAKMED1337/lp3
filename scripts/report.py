@@ -1,8 +1,7 @@
 from helper.db_config import db
 from helper.db_config import start as start_db
 from helper.main_handler import main_handler
-from management.connected_accounts import ConnectedAccounts
-from management.reports import Reports
+from management import ConnectedAccounts, Reports
 
 from .config import ADMIN_ID
 from .print_reports import print_reports

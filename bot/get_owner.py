@@ -1,7 +1,6 @@
 from telethon.types import Message
 
-from management.connected_accounts import ConnectedAccounts
-from management.users import Users
+from management import ConnectedAccounts, Users
 
 from .config import bot
 from .helper import command_with_wallet, represent

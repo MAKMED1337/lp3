@@ -2,8 +2,7 @@ from telethon import events
 from telethon.types import Message
 
 from helper.db_config import db
-from management.connected_accounts import ConnectedAccounts
-from management.users import Users
+from management import ConnectedAccounts, Users
 
 from .config import bot
 from .helper import command_with_wallet

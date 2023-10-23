@@ -6,9 +6,7 @@ from helper.db_config import start as start_db
 from helper.lp3_config import lp3
 from helper.main_handler import main_handler
 from log_scraper.logs import Logs
-from management.bans import Bans
-from management.connected_accounts import ConnectedAccounts
-from management.users import Users
+from management import Bans, ConnectedAccounts, Users
 
 account_owners: dict[str, int] = {}
 owners: dict[int, Users] = {}

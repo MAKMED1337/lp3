@@ -5,10 +5,7 @@ from typing import Any
 from telethon.custom import Conversation
 from telethon.types import Message
 
-from management.bans import Bans
-from management.connected_accounts import ConnectedAccounts
-from management.reports import Reports
-from management.users import Users
+from management import Bans, ConnectedAccounts, Reports, Users
 
 from .config import bot
 from .helper import MESSAGE_LEN, admin_command, represent

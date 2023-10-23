@@ -3,8 +3,7 @@ from datetime import timedelta
 from helper.db_config import db
 from helper.db_config import start as start_db
 from helper.main_handler import main_handler
-from management.bans import Bans
-from management.connected_accounts import ConnectedAccounts
+from management.bans import Bans, ConnectedAccounts
 
 from .config import ADMIN_ID
 
