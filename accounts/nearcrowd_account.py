@@ -2,6 +2,7 @@ import asyncio
 import base64
 import json
 from typing import Any, Literal
+from urllib.parse import quote
 
 import aiohttp
 from pydantic import BaseModel
@@ -98,6 +99,10 @@ class NearCrowdAccount:
             except Exception:  # noqa: BLE001
                 await asyncio.sleep(1)
         return None
+
+    async def report_review(self, task_id: int, report_order: int, reason: str) -> None:
+        path = f'v2/report_review/{task_id}/{report_order}/{quote(reason, "")}'
+        await self.query(V2(path=path))
 
 
     @staticmethod
