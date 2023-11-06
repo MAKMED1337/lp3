@@ -44,6 +44,17 @@ services:
         volumes:
             - telethon-sessions:/bot/sessions
 
+    sampler:
+        restart: always
+        build:
+            context: ./
+            dockerfile: sampler/Dockerfile
+        env_file:
+            - env/database.env
+            - env/account.env
+        depends_on:
+            - db
+
     tester:  # for test through `exec -it`
         restart: always
         build: .
