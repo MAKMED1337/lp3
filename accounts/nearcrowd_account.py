@@ -7,10 +7,7 @@ import aiohttp
 from pydantic import BaseModel
 
 from helper.provider_config import provider
-from near import transactions
-from near.account import Account
-from near.providers import FinalityTypes
-from near.signer import KeyPair, Signer
+from near import Account, FinalityTypes, KeyPair, Signer, transactions
 
 contract_id = 'app.nearcrowd.near'
 api = 'https://nearcrowd.com/'
