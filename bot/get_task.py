@@ -12,7 +12,7 @@ example_task_name = 'Часть VII. Избранные темы. Глава 34.
 
 @bot.on(events.NewMessage(pattern=r'^/task_id'))
 async def get_task_id(msg: Message) -> None:
-    result = re.search(fr'^/task_id(?:@{BOT_NAME})? (.+)$', msg.raw_text)
+    result = re.search(fr'^/task_id(?:@{BOT_NAME})? (.+)', msg.raw_text, re.DOTALL)
     if not result or len(result.groups()) != 1:
         await msg.reply(f'Invalid task name.\nUsage: /task_id {example_task_name}')
         return
