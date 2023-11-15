@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import VARCHAR, and_, insert, select, update
+from sqlalchemy import VARCHAR, insert, select, update
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
 
@@ -28,20 +28,24 @@ class Samples(Base):
     async def set_status(task_id: int, comment: str, is_ok: bool) -> None:
         await db.execute(update(Samples).values(comment=comment, is_ok=is_ok).where(Samples.task_id == task_id))
 
-    #selecting random task that has last review few days ago and hasn't been sampled yet
+    # selecting random task that has last review few days ago and hasn't been sampled yet
     @staticmethod
     async def select_random_sample() -> int | None:
         dt = datetime.now()  # noqa: DTZ005
+
+        query_last_entry_id = select(func.max(Logs.entry_id)) \
+            .group_by(Logs.user_task_id)
+
         query = select(Logs.user_task_id) \
-            .group_by(Logs.user_task_id) \
-            .having(and_(
-                func.max(Logs.dt) <= dt - MIN_OFFSET,
-                func.max(Logs.dt) >= dt - MAX_OFFSET,
-            )).where(
-                Logs.user_task_id.notin_(
+            .where(
+                Logs.entry_id.in_(query_last_entry_id), # this is the last action on a task
+                Logs.type == Type.review, # this action is review
+                Logs.user_task_id.notin_( # hasn't been sampled before
                     select(Samples.task_id),
                 ),
-                Logs.type == Type.task,
+                Logs.dt <= dt - MIN_OFFSET,
+                Logs.dt >= dt - MAX_OFFSET,
+                Logs.data['verdict'].as_integer() == 1, # accepted
             )
 
         return await db.fetch_val(query.order_by(func.random()).limit(1))
