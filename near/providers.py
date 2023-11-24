@@ -29,8 +29,10 @@ class JsonProvider:
     async def close(self) -> None:
         if self._session:
             await self._session.close()
+            self._session = None
 
     async def __aenter__(self) -> Self:
+        self.start()
         return self
 
     async def __aexit__(self, *_) -> None:
