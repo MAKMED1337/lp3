@@ -19,7 +19,7 @@ async def listify_accounts(user_id: int) -> str:
 async def connected_accounts(msg: Message) -> None:
     user = await Users.get_by_tg(msg.sender_id)
     if user is None:
-        await msg.reply('Unknow user')
+        await msg.reply('Unknown user')
         return
 
     await msg.reply(await listify_accounts(user.id))
