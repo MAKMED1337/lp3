@@ -8,6 +8,9 @@ services:
             - env/database.env
         volumes:
             - postgres-volume:/var/lib/postgresql/data
+        logging:
+            driver: none
+
 
     scraper:
         restart: always

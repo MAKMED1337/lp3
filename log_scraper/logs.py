@@ -9,6 +9,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.sql import func
 
 from helper.db_config import Base, db, to_mapping
+from management.connected_accounts import ConnectedAccounts
 
 from .config import REVIEWS_PER_TASK
 
@@ -85,8 +86,15 @@ class Logs(Base):
         return await db.fetch_one(select(Logs).order_by(Logs.entry_id.desc()).limit(1))  # type: ignore[return-value]
 
     @staticmethod
-    async def get_all_review_balances() -> dict[str, int]:
+    async def get_all_review_balances_per_account() -> dict[str, int]:
         return dict(await db.fetch_all(select(Logs.user_id, func.sum(Logs.review_balance)).group_by(Logs.user_id)))  # type: ignore[arg-type]
+
+    @staticmethod
+    async def get_all_review_balances_per_user() -> dict[int, int]:
+        query = select(ConnectedAccounts.owner_id, func.sum(Logs.review_balance)) \
+            .join(Logs, Logs.user_id == ConnectedAccounts.user_id) \
+            .group_by(ConnectedAccounts.owner_id)
+        return dict(await db.fetch_all(query))  # type: ignore[arg-type]
 
     @staticmethod
     async def get_review_balance(user_id: str) -> int:

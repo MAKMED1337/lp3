@@ -10,15 +10,15 @@ from management import Bans, ConnectedAccounts, Users
 
 account_owners: dict[str, int] = {}
 owners: dict[int, Users] = {}
-review_balances: dict[str, int] = {}
+review_balances: dict[int, int] = {}
 bans: list[Bans] = []
 
 def do_allow_reviews(user_id: str) -> bool:
-    if review_balances.get(user_id, 0) <= 0:
+    owner_id = account_owners.get(user_id)
+    if owner_id is None:
         return False
 
-    owner_id = account_owners[user_id]
-    if not owners[owner_id].can_perform_reviews:
+    if not owners[owner_id].can_perform_reviews or review_balances.get(owner_id, 0) <= 0:
         return False
 
     return all(ban.owner_id != owner_id for ban in bans)
@@ -29,7 +29,7 @@ async def main() -> None:
     await start_db()
 
     while True:
-        review_balances = await Logs.get_all_review_balances()
+        review_balances = await Logs.get_all_review_balances_per_user()
         owners = {i.id: i for i in await Users.get_all()}
         account_owners = await ConnectedAccounts.get_owners()
         bans = await Bans.active_bans()
