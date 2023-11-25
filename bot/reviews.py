@@ -17,7 +17,10 @@ async def connect_account(msg: Message) -> None:
         await msg.reply('No accounts')
         return
 
+    assert owner is not None  # because None has no accounts
+
     tasks = [Logs.get_review_balance(account_id) for account_id in accounts]
     balance = sum(await asyncio.gather(*tasks))
+    paid_reviews_left = owner.paid_reviews - await Logs.get_total_reviews_performed_for_user(owner.id)
 
-    await msg.reply(str(balance))
+    await msg.reply(f'Review balance: {balance}\nPaid reviews left: {paid_reviews_left}')
