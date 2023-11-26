@@ -11,6 +11,7 @@ from management import Bans, ConnectedAccounts, Users
 account_owners: dict[str, int] = {}
 owners: dict[int, Users] = {}
 review_balances: dict[int, int] = {}
+performed_reviews: dict[int, int] = {}
 bans: list[Bans] = []
 
 def do_allow_reviews(user_id: str) -> bool:
@@ -18,21 +19,28 @@ def do_allow_reviews(user_id: str) -> bool:
     if owner_id is None:
         return False
 
-    if not owners[owner_id].can_perform_reviews or review_balances.get(owner_id, 0) <= 0:
+    owner = owners[owner_id]
+    if (
+        not owner.can_perform_reviews or  # not allowed to
+        review_balances.get(owner_id, 0) <= 0 or  # has no reviews left
+        performed_reviews.get(owner_id, 0) >= owner.paid_reviews  # haven't paid for them
+    ):
         return False
 
     return all(ban.owner_id != owner_id for ban in bans)
 
 
 async def main() -> None:
-    global account_owners, owners, review_balances, bans
+    global account_owners, owners, review_balances, performed_reviews, bans
     await start_db()
 
     while True:
-        review_balances = await Logs.get_all_review_balances_per_user()
-        owners = {i.id: i for i in await Users.get_all()}
-        account_owners = await ConnectedAccounts.get_owners()
-        bans = await Bans.active_bans()
+        async with db.transaction():
+            review_balances = await Logs.get_all_review_balances_per_user()
+            performed_reviews = await Logs.get_total_reviews_performed_per_user()
+            owners = {i.id: i for i in await Users.get_all()}
+            account_owners = await ConnectedAccounts.get_owners()
+            bans = await Bans.active_bans()
 
         for permission in await lp3.get_permissions():
             user_id = permission.user_id

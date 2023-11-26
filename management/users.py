@@ -16,6 +16,8 @@ class Users(Base):
     can_perform_reviews: Mapped[bool] = mapped_column(default=False, server_default='false')
     is_admin: Mapped[bool] = mapped_column(default=False, server_default='false')
 
+    paid_reviews: Mapped[int] = mapped_column(default=0, server_default='0')
+
     @staticmethod
     async def add_account(id: int, user_id: str) -> None:
         await db.execute(insert(ConnectedAccounts).values((user_id, id)))
@@ -47,3 +49,7 @@ class Users(Base):
     @staticmethod
     async def get_all() -> list['Users']:
         return await db.fetch_all(select(Users))  # type: ignore[return-value]
+
+    @staticmethod
+    async def add_paid_reviews(id: int, amount: int) -> None:
+        await db.execute(update(Users).where(Users.id == id).values(paid_reviews=Users.paid_reviews + amount))

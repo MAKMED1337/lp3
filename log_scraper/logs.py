@@ -107,3 +107,21 @@ class Logs(Base):
             .where(func.replace(Logs.short_descr, ' ', '') == name.replace(' ', '').replace('\n', ''))
             .order_by(Logs.entry_id.desc()),
         )
+
+    @staticmethod
+    async def get_total_reviews_performed_per_user() -> dict[int, int]:
+        return dict(await db.fetch_all(QUERY_PERFORMED_REVIEWS))  # type: ignore[arg-type]
+
+    @staticmethod
+    async def get_total_reviews_performed_for_user(owner_id: int) -> int:
+        query = QUERY_PERFORMED_REVIEWS.where(ConnectedAccounts.owner_id == owner_id)  # specify owner
+        result = await db.fetch_one(query)
+        return result[1] if result is not None else 0  # return only count
+
+
+QUERY_PERFORMED_REVIEWS = (
+    select(ConnectedAccounts.owner_id, func.count())
+    .join(Logs, Logs.user_id == ConnectedAccounts.user_id)
+    .where(Logs.review_balance == -1)  # because review always decrease balance by 1
+    .group_by(ConnectedAccounts.owner_id)
+)
