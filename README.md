@@ -26,6 +26,9 @@ Environment files supposed to be in `env/` folder
     * `POSTGRES_PASSWORD` - password for database.
     * `POSTGRES_DB` - database name.
     * `POSTGRES_HOST` - should be the same as service name in `docker-compose.yml`.
+4) `watcher.env` - configuration for watcher
+    * `watched_account` - account that is used for payments
+    * `review_prcie` - price for 1 review in **micro** nears
 
 ## Services structure
 Services are described in `docker-compose.yml`.
@@ -33,4 +36,5 @@ Services are described in `docker-compose.yml`.
 2) `permissions` (`review_permissions/`) - automatically adjusts users' permissions (only review allowance for now) on nearcrowd to stay in sync with local ones.
 3) `bot` (`bot/`) - telegram bot.
 4) `sampler` (`sampler/`) - automatically takes a sample periodically.
-5) `tester` (no folder) - is used for testing inside container, mainly for running scripts.
+5) `watcher` (`watcher/`) - watches payments for reviews
+6) `tester` (no folder) - is used for testing inside container, mainly for running scripts.
